@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-dark text-white">
+
+<div class="container mt-4">
+
+    <h2 class="text-center mb-4">📊 Admin Dashboard</h2>
+
+    <!-- STATS -->
+    <div class="row text-center">
+
+        <div class="col-md-4 mb-3">
+            <div class="card bg-primary text-white p-3">
+                <h4>Total Orders</h4>
+                <h2>{{ total_orders }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card bg-success text-white p-3">
+                <h4>Revenue</h4>
+                <h2>₹ {{ revenue }}</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SAFE DATA -->
+    {{ labels|json_script:"labels-data" }}
+    {{ data|json_script:"orders-data" }}
+
+    <!-- GRAPH -->
+    <div class="mt-5 bg-white p-3 rounded">
+        <canvas id="ordersChart"></canvas>
+    </div>
+
+    <!-- RECENT ORDERS (UPGRADED UI) -->
+    <div class="mt-5">
+
+        <h4 class="mb-3">📦 Recent Orders</h4>
+
+        <div class="row">
+
+            {% for o in recent_orders %}
+
+            <div class="col-md-6 mb-3">
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between">
+
+                            <h6 class="mb-0">🧾 Order #{{ o.id }}</h6>
+
+                            <span class="badge bg-success">
+                                ₹ {{ o.total }}
+                            </span>
+
+                        </div>
+
+                        <small class="text-muted">
+                            {{ o.created_at }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- CHART SCRIPT -->
+<script>
+const labels = JSON.parse(document.getElementById('labels-data').textContent);
+const data = JSON.parse(document.getElementById('orders-data').textContent);
+
+const ctx = document.getElementById('ordersChart');
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Orders per Day',
+            data: data,
+            borderColor: 'orange',
+            backgroundColor: 'rgba(255,165,0,0.2)',
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+</script>
+
+</body>
+</html>

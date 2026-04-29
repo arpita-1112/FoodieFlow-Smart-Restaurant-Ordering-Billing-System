@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FoodieFlow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="bg-dark p-3 text-center">
+
+    <a href="/" class="text-white mx-3">🏠 Home</a>
+
+    {% if user.is_authenticated %}
+        <a href="/cart/" class="text-white mx-3">🛒 Cart</a>
+        <a href="/history/" class="text-white mx-3">📜 Orders</a>
+        <span class="text-white mx-2">👤 {{ user.username }}</span>
+        <a href="/logout/" class="text-white mx-3">🚪 Logout</a>
+    {% else %}
+        <a href="/login/" class="text-white mx-3">🔐 Login</a>
+        <a href="{% url 'signup' %}" class="text-white mx-3">📝 Signup</a>
+    {% endif %}
+
+</div>
+
+<!-- TITLE -->
+<div class="top-bar">
+    🍔 FoodieFlow Restaurant
+</div>
+
+<!-- SEARCH -->
+<div class="container mt-4">
+
+    <input type="text" id="search" class="form-control mb-4" placeholder="Search food...">
+
+    <div class="row">
+
+        {% for item in items %}
+
+        <div class="col-md-3 mb-4">
+
+            <div class="food-card p-3 text-center" data-name="{{ item.name }}">
+
+                <!-- IMAGE -->
+                <img src="{{ item.image }}" class="img-fluid mb-2">
+
+                <!-- NAME -->
+                <h5>{{ item.name }}</h5>
+
+                <!-- PRICE -->
+                <p class="price">₹ {{ item.price }}</p>
+
+                <!-- QUANTITY -->
+                <div class="d-flex justify-content-center align-items-center mb-2">
+
+                    <button class="btn btn-warning btn-sm"
+                            onclick="changeQty('minus','{{ item.id }}')">
+                        -
+                    </button>
+
+                    <input
+                        type="number"
+                        id="qty_{{ item.id }}"
+                        value=""
+                        placeholder=""
+                        min="1"
+                        class="form-control w-25 text-center mx-2"
+                    >
+
+                    <button class="btn btn-warning btn-sm"
+                            onclick="changeQty('plus','{{ item.id }}')">
+                        +
+                    </button>
+
+                </div>
+
+                <!-- ADD TO CART -->
+                <button class="btn btn-success"
+                        onclick="addToCart('{{ item.id }}')">
+                    🛒 Add to Cart
+                </button>
+
+                <!-- MESSAGE -->
+                <p id="msg_{{ item.id }}" class="text-success mt-1"></p>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<!-- FLOAT CART -->
+<a href="/cart/" class="floating-cart">🛒 Cart</a>
+
+<!-- JS -->
+<script>
+
+function changeQty(type, id) {
+
+    let input = document.getElementById("qty_" + id);
+    let value = parseInt(input.value);
+
+    // blank safe handling
+    if (isNaN(value)) {
+        value = 0;
+    }
+
+    if (type === 'plus') {
+        value += 1;
+    } else {
+        value -= 1;
+        if (value < 1) value = "";
+    }
+
+    input.value = value;
+}
+
+function addToCart(id) {
+
+    let input = document.getElementById("qty_" + id);
+    let qty = parseInt(input.value);
+
+    // validation
+    if (isNaN(qty) || qty < 1) {
+        alert("Please select quantity first");
+        return;
+    }
+
+    fetch("/add-to-cart/" + id + "/?qty=" + qty)
+        .then(() => {
+
+            let msg = document.getElementById("msg_" + id);
+
+            msg.innerText = "✔ Added to cart";
+
+            // auto clear message
+            setTimeout(() => {
+                msg.innerText = "";
+            }, 1500);
+
+            // reset input after adding
+            input.value = "";
+
+        });
+}
+
+// SEARCH FUNCTION
+document.getElementById("search").addEventListener("keyup", function () {
+
+    let value = this.value.toLowerCase();
+
+    document.querySelectorAll(".food-card").forEach(function(card) {
+
+        let name = card.getAttribute("data-name").toLowerCase();
+
+        card.parentElement.style.display =
+            name.includes(value) ? "block" : "none";
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

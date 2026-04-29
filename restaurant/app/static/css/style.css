@@ -1,0 +1,75 @@
+body {
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    color: white;
+}
+
+/* TOP BAR */
+.top-bar {
+    background: #ff3d00;
+    padding: 15px;
+    text-align: center;
+    font-size: 22px;
+}
+
+/* CARD */
+.food-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.food-card:hover {
+    transform: scale(1.05);
+}
+
+.food-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+/* PRICE */
+.price {
+    color: #00ffcc;
+}
+
+/* QTY */
+.qty-control {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.qty-control button {
+    background: orange;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+
+/* CART */
+.cart-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: black;
+    padding: 15px;
+}
+/* LOGIN UI */
+.login-card {
+    background: linear-gradient(135deg, #ff512f, #dd2476);
+    padding: 30px;
+    border-radius: 15px;
+    width: 350px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
+
+.login-card input {
+    border-radius: 8px;
+}
+
+.login-card button {
+    border-radius: 8px;
+}
